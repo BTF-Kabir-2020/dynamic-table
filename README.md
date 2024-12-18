@@ -2,6 +2,12 @@
 
 This is a Dynamic Table project that enables users to search, import, and edit data in various formats, including JSON, CSV, and XLSX. The application provides advanced features such as sorting, filtering, and editing data, making it an ideal tool for efficient data management.
 
+## Live Demo
+
+You can try out the Dynamic Table project live at the following link:
+
+[Live Demo](https://dynamic-table-phi.vercel.app/)
+
 ## Features
 
 - **Search Functionality**: Search through all data entries with ease.
@@ -68,3 +74,8 @@ To learn more about the technologies used in this project, take a look at the fo
     Next.js Documentation - Learn about Next.js features and APIs.
     Learn Next.js - An interactive tutorial to get familiar with Next.js.
     Vercel Deployment Documentation - For deploying your project to Vercel.
+    
+### Screenshots
+
+![image](https://github.com/user-attachments/assets/de47416d-aca4-4311-9e20-15ba999c4ff3)
+
