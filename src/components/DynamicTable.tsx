@@ -1,45 +1,48 @@
 "use client";
-import axios from "axios";
-import { useFileExport } from "@/hooks/useFileExport";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   ChevronUpIcon,
   ChevronDownIcon,
   ArrowsUpDownIcon,
-} from "@heroicons/react/24/solid"; // Importing icons
+} from "@heroicons/react/24/solid"; 
+import { useFileExport } from "@/utils/useFileExport";
+import { handleFileUpload } from "@/utils/handleFileUpload";
+import fetchData from "@/utils/fetchData"; 
+import useSorting from "@/hooks/useSorting";
+import Pagination from "@/components/Pagination"; 
+import ExportButtons from "@/components/ExportButtons";
 
 interface DataRow {
   [key: string]: string | number;
 }
 
 const sampleData = [
-  { email: "1@gmail.com", name: "Ali", age: 25 },
-  { email: "2@gmail.com", name: "Sara", age: 30 },
-  { email: "3@gmail.com", name: "Mohammad", age: 28 },
+  { email: "test1@gmail.com", name: "test1", age: 1 },
+  { email: "test2@gmail.com", name: "test2", age: 2 },
+  { email: "test3@gmail.com", name: "test3", age: 3 },
 ];
 
 const DynamicTable: React.FC = () => {
+  // داده‌های نمونه برای نمایش در جدول
   const [data, setData] = useState<DataRow[]>(sampleData);
+  // وضعیت جستجو برای فیلتر کردن داده‌ها
   const [searchTerm, setSearchTerm] = useState<string>("");
+  // صفحه فعلی برای صفحه‌بندی
   const [currentPage, setCurrentPage] = useState<number>(1);
+  // تعداد آیتم‌های هر صفحه
   const [itemsPerPage] = useState<number>(5);
-
-  const [sortConfig, setSortConfig] = useState<{
-    key: string | null;
-    direction: "asc" | "desc" | null;
-  }>({
-    key: null,
-    direction: null,
-  });
-
+  // وضعیت نگهداری ستون‌های قابل مشاهده
   const [visibleColumns, setVisibleColumns] = useState<string[]>([]);
+  // نام‌های اصلی ستون‌ها برای نمایش در UI
   const [columnNames, setColumnNames] = useState<{ [key: string]: string }>({});
+  // نام‌های موقت ستون‌ها برای ویرایش یا تنظیمات موقت
   const [tempColumnNames, setTempColumnNames] = useState<{
     [key: string]: string;
-  }>({}); // وضعیت موقت برای نگهداری نام ستون‌ها
+  }>({});
+  // وضعیت فیلترهای جستجو برای هر ستون
   const [columnSearch, setColumnSearch] = useState<{ [key: string]: string }>(
     {}
-  ); // وضعیت جستجو برای هر ستون
+  );
 
   useEffect(() => {
     if (data.length > 0) {
@@ -52,68 +55,44 @@ const DynamicTable: React.FC = () => {
       );
     }
 
-    const fetchData = async () => {
+    const fetchDataFromAPI = async () => {
       try {
-        const response = await axios.get("/api/data_default");
-        setData(response.data);
+        const fetchedData = await fetchData(); 
+        setData(fetchedData); 
       } catch (err) {
         console.error("Error fetching data:", err);
       }
     };
-    fetchData();
+
+    fetchDataFromAPI();
   }, []);
 
-  const handleSorting = (column: string) => {
-    let newDirection: "asc" | "desc" | null = null;
+  const { sortConfig, handleSorting } = useSorting();
 
-    if (sortConfig.key === column) {
-      if (sortConfig.direction === "asc") {
-        newDirection = "desc";
-      } else if (sortConfig.direction === "desc") {
-        newDirection = null;
-      } else {
-        newDirection = "asc";
-      }
-    } else {
-      newDirection = "asc";
-    }
+  const handleDataChange = useCallback(
+    (rowIndex: number, key: string, value: string) => {
+      const updatedData = [...data];
+      const pageIndex = (currentPage - 1) * itemsPerPage;
+      const rowIndexInPage = rowIndex + pageIndex;
+      updatedData[rowIndexInPage][key] = value;
+      setData(updatedData);
+    },
+    [data, currentPage, itemsPerPage]
+  );
 
-    setSortConfig({
-      key: column,
-      direction: newDirection,
-    });
-  };
-
-  const handleColumnVisibility = (key: string) => {
-    // Toggle the visibility of the column
-    const newVisibleColumns = visibleColumns.includes(key)
-      ? visibleColumns.filter((col) => col !== key)
-      : [...visibleColumns, key];
-
-    setVisibleColumns(newVisibleColumns);
-  };
-
-  const handleDataChange = (rowIndex: number, key: string, value: string) => {
-    const updatedData = [...data];
-    // فقط داده‌های مربوط به صفحه جاری را تغییر بدهیم
-    const pageIndex = (currentPage - 1) * itemsPerPage; // تعیین صفحه جاری
-    const rowIndexInPage = rowIndex + pageIndex; // تعیین اندیس ردیف در تمام داده‌ها
-    updatedData[rowIndexInPage][key] = value;
-    setData(updatedData);
-  };
-
-  const handleRowDelete = (rowIndex: number) => {
-    const updatedData = data.filter((_, index) => index !== rowIndex);
-    setData(updatedData);
-  };
+  const handleRowDelete = useCallback(
+    (rowIndex: number) => {
+      const updatedData = data.filter((_, index) => index !== rowIndex);
+      setData(updatedData);
+    },
+    [data]
+  );
 
   const handleRowAdd = () => {
     const newRow: DataRow = visibleColumns.reduce((acc, column) => {
-      acc[column] = ""; // مقادیر ستون‌های جدید را به صورت رشته خالی تنظیم می‌کنیم
+      acc[column] = "";
       return acc;
     }, {} as DataRow);
-
-    // اضافه کردن ردیف جدید
     setData([...data, newRow]);
   };
 
@@ -180,19 +159,23 @@ const DynamicTable: React.FC = () => {
     setTempColumnNames((prev) => ({ ...prev, [key]: columnNames[key] }));
   };
 
-  const handleColumnDelete = (columnName: string) => {
-    const updatedData = data.map((row) => {
-      const { [columnName]: _, ...rest } = row;
-      return rest;
-    });
-    setData(updatedData);
+  // تابع برای حذف ستون
+  const handleColumnDelete = useCallback(
+    (columnName: string) => {
+      const updatedData = data.map((row) => {
+        const { [columnName]: _, ...rest } = row;
+        return rest;
+      });
+      setData(updatedData);
 
-    const updatedColumnNames = { ...columnNames };
-    delete updatedColumnNames[columnName];
-    setColumnNames(updatedColumnNames);
+      const updatedColumnNames = { ...columnNames };
+      delete updatedColumnNames[columnName];
+      setColumnNames(updatedColumnNames);
 
-    setVisibleColumns((prev) => prev.filter((col) => col !== columnName));
-  };
+      setVisibleColumns((prev) => prev.filter((col) => col !== columnName));
+    },
+    [data, columnNames]
+  );
 
   const filteredData = data.filter((row) => {
     // ابتدا فیلتر جستجو در هر ستون
@@ -241,67 +224,28 @@ const DynamicTable: React.FC = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentData = sortedData.slice(indexOfFirstItem, indexOfLastItem);
 
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handlePrevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const pageNumbers = [];
   for (let i = 1; i <= totalPages; i++) {
     pageNumbers.push(i);
   }
 
-  // تابع برای بارگذاری فایل JSON و بررسی فرمت آن
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-
-      reader.onload = (e) => {
-        try {
-          // پارس کردن محتوای فایل JSON
-          const fileData = JSON.parse(e.target?.result as string);
-
-          // بررسی ساختار داده‌ها
-          const isValid =
-            Array.isArray(fileData) &&
-            fileData.every(
-              (item) =>
-                typeof item === "object" &&
-                "email" in item &&
-                "name" in item &&
-                "age" in item
-            );
-
-          if (isValid) {
-            setData(fileData); // جایگزینی داده‌ها
-          } else {
-            alert(
-              "The data format is incorrect. The data should contain 'email', 'name' and 'age'."
-            );
-          }
-        } catch (error) {
-          console.error("Error parsing JSON:", error);
-          alert("Error processing file.");
-        }
-      };
-
-      reader.readAsText(file);
-    }
-  };
-
   const { exportToJson, exportToCsv, exportToXlsx } = useFileExport();
 
   const handleSearchInColumn = (column: string, value: string) => {
     setColumnSearch((prev) => ({ ...prev, [column]: value }));
+  };
+
+  const onFileChange = async (e:any) => {
+    const file = e.target.files[0]; // دریافت فایل انتخاب شده
+    if (file) {
+      try {
+        const data = await handleFileUpload(file); // فراخوانی تابع با فایل
+        setData(data); // تنظیم داده‌ها
+      } catch (error) {
+        console.error(error); // مدیریت خطا
+      }
+    }
   };
 
   return (
@@ -372,21 +316,21 @@ const DynamicTable: React.FC = () => {
                           )}
                         </span>
                         <span title="Delete column">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth={1.5}
-                          stroke="currentColor"
-                          className="size-6 text-red-500 hover:text-red-700 cursor-pointer"
-                          onClick={() => handleColumnDelete(key)}
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M6 18 18 6M6 6l12 12"
-                          />
-                        </svg>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="size-6 text-red-500 hover:text-red-700 cursor-pointer"
+                            onClick={() => handleColumnDelete(key)}
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M6 18 18 6M6 6l12 12"
+                            />
+                          </svg>
                         </span>
                       </div>
 
@@ -467,65 +411,19 @@ const DynamicTable: React.FC = () => {
 
       <div className="lg:flex justify-between mt-10">
         {/* دکمه‌های Export */}
-        <div className="flex gap-4 mb-4">
-          <button
-            onClick={() => exportToJson(sortedData)}
-            className="px-4 py-2 rounded-md shadow-md  bg-blue-500 hover:bg-blue-600 text-white"
-          >
-            Export to JSON
-          </button>
-          <button
-            onClick={() => exportToCsv(sortedData)}
-            className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-600"
-          >
-            Export to CSV
-          </button>
-          <button
-            onClick={() => exportToXlsx(sortedData)}
-            className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-600"
-          >
-            Export to XLSX
-          </button>
-        </div>
+        <ExportButtons
+          sortedData={sortedData}
+          exportToJson={exportToJson}
+          exportToCsv={exportToCsv}
+          exportToXlsx={exportToXlsx}
+        />
 
-        {/* دکمه‌های Pagination */}
-        <div className="flex justify-center 2xl:me-[200] mb-4 space-x-2">
-          <button
-            onClick={handlePrevPage}
-            disabled={currentPage === 1}
-            className={`px-3 py-2 border rounded ${
-              currentPage === 1
-                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                : "bg-blue-500 hover:bg-blue-600 text-white"
-            }`}
-          >
-            Previous
-          </button>
-          {pageNumbers.map((number) => (
-            <button
-              key={number}
-              onClick={() => setCurrentPage(number)}
-              className={`px-3 py-2 border rounded ${
-                currentPage === number
-                  ? "bg-blue-400 text-white hover:bg-sky-500  shadow-md"
-                  : "bg-gray-200 hover:bg-slate-200"
-              }`}
-            >
-              {number}
-            </button>
-          ))}
-          <button
-            onClick={handleNextPage}
-            disabled={currentPage === totalPages}
-            className={`px-3 py-2 border rounded  shadow-md ${
-              currentPage === totalPages
-                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                : "bg-blue-500 hover:bg-blue-600 text-white"
-            }`}
-          >
-            Next
-          </button>
-        </div>
+        {/* پیجینیشن یا وضعیت صفحات */}
+        <Pagination
+          currentPage={currentPage} // صفحه فعلی که در حال حاضر نمایش داده می‌شود
+          totalPages={totalPages} // تعداد کل صفحات بر اساس داده‌ها و تعداد آیتم‌ها در هر صفحه
+          onPageChange={setCurrentPage} // تابعی که برای تغییر صفحه فراخوانی می‌شود (برای به‌روز رسانی صفحه فعلی)
+        />
 
         {/* دکمه‌های افزودن ردیف و ستون */}
         <div className="flex gap-4 items-center justify-center mb-4">
@@ -544,29 +442,13 @@ const DynamicTable: React.FC = () => {
         </div>
       </div>
 
-      {/* 
-      <div className="flex flex-wrap mb-4 hidden">
-        {data[0] &&
-          Object.keys(data[0]).map((key) => (
-            <label key={key} className="mr-4 flex items-center">
-              <input
-                type="checkbox"
-                checked={visibleColumns.includes(key)} // چک‌باکس بر اساس وجود ستون در visibleColumns فعال/غیرفعال می‌شود
-                onChange={() => handleColumnVisibility(key)} // تغییر وضعیت تیک
-                className="mr-2"
-              />
-              {key}
-            </label>
-          ))}
-      </div> */}
-
       <div className="flex items-center justify-start">
         {/* بارگذاری فایل JSON */}
         <div className="my-5">
           <input
             type="file"
             accept=".json"
-            onChange={handleFileUpload}
+            onChange={onFileChange} // ارسال setData به تابع
             className="border-2 border-blue-300 rounded p-2 shadow-sm file:hover:bg-blue-600 file:bg-blue-500 file:text-white file:border-0 file:rounded-md file:cursor-pointer"
           />
         </div>

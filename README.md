@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Dynamic Table Project
+
+This is a Dynamic Table project that enables users to search, import, and edit data in various formats, including JSON, CSV, and XLSX. The application provides advanced features such as sorting, filtering, and editing data, making it an ideal tool for efficient data management.
+
+## Features
+
+- **Search Functionality**: Search through all data entries with ease.
+- **Column-Based Search**: Search within individual columns for more granular control.
+- **Import Data**: Import data into the table from **JSON** files.
+- **Export Options**: Export table data in **XLSX**, **CSV**, or **JSON** formats.
+- **Editable Data**: Modify data directly within the table in real-time.
+- **Sorting**: Sort data by any column in both ascending and descending order.
+- **Responsive**: Works seamlessly across different screen sizes.
 
 ## Getting Started
 
-First, run the development server:
+Follow the steps below to get the project up and running on your local machine:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### Prerequisites
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Before you begin, ensure you have **Node.js** and **Yarn** installed.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Node.js**: [Download Node.js](https://nodejs.org/) if it's not already installed.
+- **Yarn**: Install Yarn globally by running the following command (if you haven't already):
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+  ```bash
+  npm install -g yarn
 
-## Learn More
+Installation
 
-To learn more about Next.js, take a look at the following resources:
+    Clone the repository:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+    First, clone the repository to your local machine:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+git clone <repository-url>
+cd <repository-folder>
 
-## Deploy on Vercel
+Install dependencies:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Install the required dependencies using Yarn. In the project directory, run:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+yarn install
+
+Run the development server:
+
+Once dependencies are installed, start the development server by running:
+
+    yarn dev
+
+    This will start the server, and you can view the project in your browser at http://localhost:3000.
+
+    Edit the Table:
+
+    You can start editing the table and its features by modifying the code in the app/page.tsx file. The page will auto-update as you save your changes.
+
+Usage
+
+    Search: To search through all rows of data, simply use the search bar at the top.
+    Column-Based Search: Each column has its own search filter for more specific searches.
+    Import Data: To import data, click the "Import JSON" button and select a valid JSON file from your local machine.
+    Export Data: Click the "Export" button to export the data in CSV, XLSX, or JSON format.
+    Sorting: Click on any column header to sort the data in ascending or descending order.
+
+Learn More
+
+To learn more about the technologies used in this project, take a look at the following resources:
+
+    Next.js Documentation - Learn about Next.js features and APIs.
+    Learn Next.js - An interactive tutorial to get familiar with Next.js.
+    Vercel Deployment Documentation - For deploying your project to Vercel.
+
+Deployment
+
+This project is ready to be deployed on Vercel, the platform created by the developers of Next.js. You can easily deploy it by following these steps:
+
+    Go to Vercel and click Import Project.
+    Link your GitHub repository, and Vercel will automatically deploy the project.

@@ -1,3 +1,4 @@
+// src\app\page.tsx
 import DynamicTable from "@/components/DynamicTable";
 
 export default function Home() {

@@ -1,3 +1,4 @@
+// src\app\layout.tsx
 import type { Metadata } from "next";
 import { PT_Serif } from "next/font/google";
 import "./globals.css";
@@ -8,6 +9,7 @@ const ptserif = PT_Serif({
   weight: ["400", "700"],
   display: "swap",
 });
+
 
 export const metadata: Metadata = {
   title: "Dynamic Table",
