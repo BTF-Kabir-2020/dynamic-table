@@ -1,0 +1,88 @@
+# Set default behavior to automatically normalize line endings.
+* text=auto
+
+# Explicitly declare text files to normalize and convert
+# to native line endings on checkout.
+*.c text
+*.cpp text
+*.h text
+*.php text
+*.html text
+*.css text
+*.js text
+*.jsx text
+*.json text
+*.py text
+
+
+*/*.json text
+*/*/*.json text
+*/*/*/*.json text
+*/*/*/*.json text
+*/*/*/*.json text
+*/*/*/*/*.json text
+*/*/*/*/*/*.json text
+*/*/*/*/*/*/*.json text
+
+*/*.js text
+*/*/*.js text
+*/*/*/*.js text
+*/*/*/*.js text
+*/*/*/*.js text
+*/*/*/*/*.js text
+*/*/*/*/*/*.js text
+*/*/*/*/*/*/*.js text
+
+*/*.jsx text
+*/*/*.jsx text
+*/*/*/*.jsx text
+*/*/*/*.jsx text
+*/*/*/*.jsx text
+*/*/*/*/*.jsx text
+*/*/*/*/*/*.jsx text
+*/*/*/*/*/*/*.jsx text
+
+
+
+# Handle nested .json, .js, and .jsx files
+**/*.json text
+**/*.js text
+**/*.jsx text
+**/**/*.json text
+**/**/*.js text
+**/**/*.jsx text
+**/**/**/*.json text
+**/**/**/*.js text
+**/**/**/*.jsx text
+**/**/**/**/*.json text
+**/**/**/**/*.js text
+**/**/**/**/*.jsx text
+**/**/**/**/**/*.json text
+**/**/**/**/**/*.js text
+**/**/**/**/**/*.jsx text
+**/**/**/**/**/**/*.json text
+**/**/**/**/**/**/*.js text
+**/**/**/**/**/**/*.jsx text
+**/**/**/**/**/**/**/*.json text
+**/**/**/**/**/**/**/*.js text
+**/**/**/**/**/**/**/*.jsx text
+**/**/**/**/**/**/**/**/*.json text
+**/**/**/**/**/**/**/**/*.js text
+**/**/**/**/**/**/**/**/*.jsx text
+
+
+
+# Binary files should be excluded from end-of-line normalization.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.zip binary
+*.rar binary
+<<<<<<< HEAD
+
+# Specific to your project
+# auth-app.rar binary
+=======
+>>>>>>> cbc8040 (Initial commit)
