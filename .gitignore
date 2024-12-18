@@ -41,6 +41,6 @@ yarn-error.log*
 # next-env.d.ts
 
 
-ngrok.exe
-run-ngrok.bat
-src*.rar
+*.exe
+*.bat
+*.rar
