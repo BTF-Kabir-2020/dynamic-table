@@ -68,10 +68,3 @@ To learn more about the technologies used in this project, take a look at the fo
     Next.js Documentation - Learn about Next.js features and APIs.
     Learn Next.js - An interactive tutorial to get familiar with Next.js.
     Vercel Deployment Documentation - For deploying your project to Vercel.
-
-Deployment
-
-This project is ready to be deployed on Vercel, the platform created by the developers of Next.js. You can easily deploy it by following these steps:
-
-    Go to Vercel and click Import Project.
-    Link your GitHub repository, and Vercel will automatically deploy the project.
